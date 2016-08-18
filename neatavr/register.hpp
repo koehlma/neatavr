@@ -58,12 +58,15 @@ namespace NeatAVR {
         }
     };
 
-    template<typename _Type, uint16 _address> class Register {
+    template<uint16 _address> class Register8 {
     public:
-        typedef _Type Type;
+        static constexpr uint8 size = 8;
+
+        typedef uint8 Type;
 
         static constexpr uint16 address = _address;
         static constexpr volatile Type* pointer = reinterpret_cast<volatile Type*>(address);
+
 
         static inline uint8 get_bit(uint8 number) ALWAYS_INLINE {
             return (*pointer >> number) & 1;
@@ -92,14 +95,6 @@ namespace NeatAVR {
             set_bit(number, value);
         }
 
-    };
-
-    template<uint16 address> class Register8 : public Register<uint8, address> {
-    public:
-        using Register<uint8, address>::pointer;
-
-        static constexpr uint8 size = 8;
-
         static inline uint8 get() ALWAYS_INLINE {
             return *pointer;
         }
@@ -109,7 +104,6 @@ namespace NeatAVR {
         static inline uint8 get_high() ALWAYS_INLINE {
             return 0;
         }
-
 
         static inline void set(uint8 value) ALWAYS_INLINE {
             *pointer = value;
@@ -138,21 +132,65 @@ namespace NeatAVR {
         typedef Bit<Register8, 7> Bit7;
     };
 
-    template<uint16 address> class Register16 : public Register<uint16, address> {
+    template<uint16 _address_high, uint16 _address_low> class Register16  {
     public:
-        using Register<uint16, address>::pointer;
-
         static constexpr uint8 size = 16;
 
-        static constexpr volatile uint8* low = reinterpret_cast<volatile uint8*>(address);
-        static constexpr volatile uint8* high = reinterpret_cast<volatile uint8*>(address + 1);
+        typedef uint16 Type;
+
+        static constexpr uint16 address_high = _address_high;
+        static constexpr uint16 address_low = _address_low;
+
+        static constexpr volatile Type* high = reinterpret_cast<volatile Type*>(address_high);
+        static constexpr volatile Type* low = reinterpret_cast<volatile Type*>(address_low);
+
+        static inline uint8 get_bit(uint8 number) ALWAYS_INLINE {
+            if (number > 7) {
+                return (*high >> (number - 8)) & 1;
+            } else {
+                return (*low >> number) & 1;
+            }
+        }
+        static inline void set_bit(uint8 number) ALWAYS_INLINE {
+            if (number > 7) {
+                *high |= 1 << (number - 8);
+            } else {
+                *low |= 1 << number;
+            }
+        }
+        static inline void set_bit(uint8 number, uint8 value) ALWAYS_INLINE {
+            if (value) {
+                set_bit(number);
+            } else {
+                clear_bit(number);
+            }
+        }
+        static inline void clear_bit(uint8 number) ALWAYS_INLINE {
+            if (number > 7) {
+                *high &= ~(1 << (number - 8));
+            } else {
+                *low &= ~(1 << number);
+            }
+        }
+        static inline void toggle_bit(uint8 number) ALWAYS_INLINE {
+            if (number > 7) {
+                *high ^= 1 << (number - 8);
+            } else {
+                *low ^= 1 << number;
+            }
+        }
+
+        static inline uint8 bit(uint8 number) ALWAYS_INLINE {
+            return get_bit(number);
+        }
+        static inline void bit(uint8 number, uint8 value) ALWAYS_INLINE {
+            set_bit(number, value);
+        }
 
         static inline uint16 get() ALWAYS_INLINE {
-            uint16 temp;
             SYNCHRONIZED(SYNCHRONIZED_RESTORE) {
-                 temp = *pointer;
+                return (*low) | (*high << 7);
             }
-            return temp;
         }
         static inline uint8 get_low() ALWAYS_INLINE {
             return *low;
@@ -163,7 +201,8 @@ namespace NeatAVR {
 
         static inline void set(uint16 value) ALWAYS_INLINE {
             SYNCHRONIZED(SYNCHRONIZED_RESTORE) {
-                *pointer = value;
+                *low = value | 0xFF;
+                *high = value >> 7;
             }
         }
         static inline void set_low(uint8 value) ALWAYS_INLINE {
@@ -202,8 +241,8 @@ namespace NeatAVR {
     public:
         typedef _Register Register;
 
-        static constexpr uint8 size = _size;
-        static constexpr uint8 start = _start;
+        static constexpr int size = _size;
+        static constexpr int start = _start;
 
         static inline void set(uint16 value) ALWAYS_INLINE {
             Register::bits(start, size, value);
@@ -218,7 +257,7 @@ namespace NeatAVR {
         typedef _Slice1 Slice1;
         typedef _Slice2 Slice2;
 
-        static constexpr uint8 size = Slice1::size + Slice2::size;
+        static constexpr int size = Slice1::size + Slice2::size;
 
         static inline void set(uint16 value) ALWAYS_INLINE {
             Slice1::set(value >> Slice2::size);

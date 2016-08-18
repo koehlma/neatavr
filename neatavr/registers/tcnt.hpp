@@ -26,37 +26,37 @@ namespace NeatAVR {
     namespace Registers {
 
 #if defined(TCNT0H) && defined(TCNT0L)
-        typedef Register16<_SFR_ADDR(TCNT0)> Tcnt0;
+        typedef Register16<_SFR_ADDR(TCNT0H), _SFR_ADDR(TCNT0L)> Tcnt0;
 #elif defined(TCNT0)
         typedef Register8<_SFR_ADDR(TCNT0)> Tcnt0;
 #endif
 
 #if defined(TCNT1H) && defined(TCNT1L)
-        typedef Register16<_SFR_ADDR(TCNT1)> Tcnt1;
+        typedef Register16<_SFR_ADDR(TCNT1H), _SFR_ADDR(TCNT1L)> Tcnt1;
 #elif defined(TCNT1)
         typedef Register8<_SFR_ADDR(TCNT1)> Tcnt1;
 #endif
 
 #if defined(TCNT2H) && defined(TCNT2L)
-        typedef Register16<_SFR_ADDR(TCNT2)> Tcnt2;
+        typedef Register16<_SFR_ADDR(TCNT2H), _SFR_ADDR(TCNT2L)> Tcnt2;
 #elif defined(TCNT2)
         typedef Register8<_SFR_ADDR(TCNT2)> Tcnt2;
 #endif
 
 #if defined(TCNT3H) && defined(TCNT3L)
-        typedef Register16<_SFR_ADDR(TCNT3)> Tcnt3;
+        typedef Register16<_SFR_ADDR(TCNT3H), _SFR_ADDR(TCNT3L)> Tcnt3;
 #elif defined(TCNT3)
         typedef Register8<_SFR_ADDR(TCNT3)> Tcnt3;
 #endif
 
 #if defined(TCNT4H) && defined(TCNT4L)
-        typedef Register16<_SFR_ADDR(TCNT4)> Tcnt4;
+        typedef Register16<_SFR_ADDR(TCNT4H), _SFR_ADDR(TCNT4L)> Tcnt4;
 #elif defined(TCNT4)
         typedef Register8<_SFR_ADDR(TCNT4)> Tcnt4;
 #endif
 
 #if defined(TCNT5H) && defined(TCNT5L)
-        typedef Register16<_SFR_ADDR(TCNT5)> Tcnt5;
+        typedef Register16<_SFR_ADDR(TCNT5H), _SFR_ADDR(TCNT5L)> Tcnt5;
 #elif defined(TCNT5)
         typedef Register8<_SFR_ADDR(TCNT5)> Tcnt5;
 #endif

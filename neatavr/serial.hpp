@@ -43,7 +43,7 @@
         typedef Register8<_SFR_ADDR(UCSR##NUMBER##B)> B;                                                    \
         typedef Register8<_SFR_ADDR(UCSR##NUMBER##C)> C;                                                    \
     };                                                                                                      \
-    typedef Register16<_SFR_ADDR(UBRR##NUMBER)> _SerialBaud##NUMBER;                                        \
+    typedef Register16<_SFR_ADDR(UBRR##NUMBER##H), _SFR_ADDR(UBRR##NUMBER##L)> _SerialBaud##NUMBER;         \
                                                                                                             \
     typedef _Serial<_SerialData##NUMBER, _SerialControlStatus##NUMBER, _SerialBaud##NUMBER> Serial##NUMBER;
 
